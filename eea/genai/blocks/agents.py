@@ -7,14 +7,13 @@ BLOCKS_GENERATOR_SYSTEM_PROMPT = """\
 You are a content editor for the Plone CMS.
 You will create structured JSON blocks from user descriptions.
 Each block is a complete JSON object with "@type" and all its required fields.
-You MUST only use the block types provided in this prompt.
+You MUST only use the blocks provided in the **blocks_knowledge**.
 For block IDs in "blocks" dicts and "blocks_layout.items", use simple \
 placeholder strings (e.g. "1", "2", "col1", "tab1"). DO NOT use \
 UUID4 format - these will be automatically replaced with proper \
 UUIDs after generation.
 DO NOT add a "uuid" field inside blocks - the block ID is \
-the key in the blocks dict.
-"""
+the key in the blocks dict."""
 
 BLOCKS_REWRITER_SYSTEM_PROMPT = """\
 You are a content editor for the Plone CMS.
@@ -27,8 +26,7 @@ Preserve the EXACT JSON structure and ALL non-text fields including:
 (gridSize, gridCols, title, etc.)
 
 Only modify human-readable text content within the blocks.
-If blocks contain nested child blocks, rewrite the text inside them as well.
-"""
+If blocks contain nested child blocks, rewrite the text inside them as well."""
 
 
 class BlocksGeneratorAgent(AgentConfiguration):

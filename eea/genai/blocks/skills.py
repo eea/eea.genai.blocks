@@ -17,10 +17,11 @@ class BlocksKnowledgeSkill(AgentSkill):
     description = "Adds available Volto block types to the system prompt"
 
     def system_prompt(self, deps):
-        block_types = get_block_types_description()
-        if not block_types:
-            return ""
-        return f"Available block types:\n{block_types}"
+        block_types = get_block_types_description() or ""
+        # if not block_types:
+        #     return ""
+        # return f"Available block types:\n\n{block_types}"
+        return block_types or ""
 
 
 def get_block_types_description():
@@ -31,25 +32,33 @@ def get_block_types_description():
     knowledge = dict(getUtilitiesFor(IBlockKnowledge))
     lines = []
 
+    k = 0
     for name, kb in sorted(knowledge.items()):
         # Skip blocks that should not be included in generation
         if not getattr(kb, "include_in_generation", True):
             continue
 
-        entry = f"- **{kb.title}** (@type: \"{name}\")"
+        if k > 0:
+            entry = "\n\n"
+        else:
+            entry = ""
+
+        entry += f"#### {kb.title} (@type: \"{name}\")"
         if kb.description:
-            entry += f": {kb.description}"
-        entry += f"\n  Schema: {kb.schema}"
+            entry += f"\n\n{kb.description}"
+        entry += f"\n\n**Schema:**\n\n{kb.schema}"
         if kb.example:
-            entry += f"\n  Example: {kb.example}"
+            entry += f"\n\n**Example:**\n\n{kb.example}"
         lines.append(entry)
 
         # Get additional context from this block type
         try:
             extra = kb.additional_prompt_context()
             if extra:
-                lines.append(f"  Context: {extra}")
+                lines.append(f"\n\n**Context:**\n\n{extra}")
         except Exception:
             pass
+
+        k += 1
 
     return "\n".join(lines)

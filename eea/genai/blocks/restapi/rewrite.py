@@ -5,7 +5,6 @@ import logging
 
 from plone.restapi.services import Service
 
-from eea.genai.blocks.restapi.generate import _get_page_context
 from eea.genai.blocks.rewrite import rewrite_block, rewrite_blocks
 
 logger = logging.getLogger("eea.genai.blocks")
@@ -50,7 +49,6 @@ class LLMRewriteBlocksPost(Service):
     def reply(self):
         body = json.loads(self.request.get("BODY", b"{}"))
         style = body.get("style")
-        page_context = _get_page_context(self.context, body)
 
         # Single block mode
         block = body.get("block")
@@ -60,8 +58,8 @@ class LLMRewriteBlocksPost(Service):
                 return {"error": "'block' must be a block object with '@type'"}
             try:
                 return rewrite_block(
-                    block, style=style, page_context=page_context,
-                    context=self.context, request=self.request,
+                    block, style=style, context=self.context,
+                    request=self.request,
                 )
             except Exception as exc:
                 logger.exception("Single block rewriting failed")
@@ -79,8 +77,8 @@ class LLMRewriteBlocksPost(Service):
 
         try:
             return rewrite_blocks(
-                blocks, style=style, page_context=page_context,
-                context=self.context, request=self.request,
+                blocks, style=style, context=self.context,
+                request=self.request,
             )
         except Exception as exc:
             logger.exception("Block rewriting failed")

@@ -54,12 +54,12 @@
     <!-- Block generation agents -->
 
     <genai:agent
-        name="block_generator"
+        name="blocks_generator"
         class=".agents.BlocksGeneratorAgent"
     />
 
     <genai:agent
-        name="block_generator_single"
+        name="blocks_generator_single"
         class=".agents.SingleBlockGeneratorAgent"
     />
 

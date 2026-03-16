@@ -9,15 +9,15 @@ from eea.genai.core.agent import AgentDeps
 from eea.genai.blocks.sanitizers import sanitize_block
 
 
-def generate_blocks(user_request, page_context=None, context=None, request=None):
+def generate_blocks(user_request, context=None, request=None):
     """Generate Volto blocks from a natural language description using agents.
 
-    Uses the ZCML-registered 'block_generator' agent (overridable via control panel).
+    Uses the ZCML-registered 'blocks_generator' agent (overridable via control panel).
     """
     executor = _get_agent_executor()
 
     result = executor.run_with_agent(
-        "block_generator",
+        "blocks_generator",
         user_prompt=user_request,
         deps=AgentDeps(context=context, request=request),
     )
@@ -25,7 +25,7 @@ def generate_blocks(user_request, page_context=None, context=None, request=None)
     return _format_blocks_result(result)
 
 
-def generate_block(user_request, block_type=None, page_context=None, context=None, request=None):
+def generate_block(user_request, block_type=None, context=None, request=None):
     """Generate a single Volto block using agents."""
     executor = _get_agent_executor()
 
@@ -34,7 +34,7 @@ def generate_block(user_request, block_type=None, page_context=None, context=Non
         prompt = f"{user_request}\n\nBlock type: {block_type}"
 
     result = executor.run_with_agent(
-        "block_generator_single",
+        "blocks_generator_single",
         user_prompt=prompt,
         deps=AgentDeps(context=context, request=request),
     )
