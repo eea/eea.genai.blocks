@@ -1,0 +1,21 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    i18n_domain="eea">
+
+    <plone:service
+        method="POST"
+        for="Products.CMFCore.interfaces.IContentish"
+        factory=".generate.LLMGenerateBlocksPost"
+        name="@llm-generate-blocks"
+        permission="cmf.ModifyPortalContent"
+    />
+
+    <plone:service
+        method="POST"
+        for="plone.restapi.behaviors.IBlocks"
+        factory=".rewrite.LLMRewriteBlocksPost"
+        name="@llm-rewrite-blocks"
+        permission="cmf.ModifyPortalContent"
+    />
+
+</configure>

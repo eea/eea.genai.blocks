@@ -1,0 +1,12 @@
+<configure xmlns="http://namespaces.zope.org/meta"
+    i18n_domain="eea">
+
+    <directives namespace="http://namespaces.eea.europa.eu/genai">
+        <directive
+            name="blockKnowledge"
+            handler=".metaconfigure.blockKnowledgeDirective"
+            schema=".metaconfigure.IBlockKnowledgeDirective"
+        />
+    </directives>
+
+</configure>

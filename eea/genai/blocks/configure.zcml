@@ -1,0 +1,78 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:genai="http://namespaces.eea.europa.eu/genai"
+    i18n_domain="eea">
+
+    <include file="meta.zcml" />
+    <include file="profiles.zcml" />
+    <include package="eea.genai.core" />
+    <include package="eea.genai.core" file="meta.zcml" />
+    <include package=".restapi" />
+
+    <!-- Block knowledge registrations -->
+
+    <genai:blockKnowledge
+        block_type="slate"
+        title="Rich Text (Slate)"
+        class=".knowledge.SlateBlockKnowledge"
+    />
+
+    <genai:blockKnowledge
+        block_type="image"
+        title="Image"
+        class=".knowledge.ImageBlockKnowledge"
+    />
+
+    <!-- Organizer blocks: containers that hold other blocks inside them -->
+
+    <genai:blockKnowledge
+        block_type="columnsBlock"
+        title="Columns"
+        class=".knowledge.ColumnsBlockKnowledge"
+    />
+
+    <genai:blockKnowledge
+        block_type="tabs_block"
+        title="Tabs"
+        class=".knowledge.TabsBlockKnowledge"
+    />
+
+    <!-- Agent context providers -->
+
+    <genai:agentContextProvider
+        name="blocks"
+        class=".context_providers.BlocksContentProvider"
+    />
+
+    <!-- Agent skills -->
+
+    <genai:agentSkill
+        name="blocks_knowledge"
+        class=".skills.BlocksKnowledgeSkill"
+    />
+
+    <!-- Block generation agents -->
+
+    <genai:agent
+        name="block_generator"
+        class=".agents.BlocksGeneratorAgent"
+    />
+
+    <genai:agent
+        name="block_generator_single"
+        class=".agents.SingleBlockGeneratorAgent"
+    />
+
+    <!-- Block rewriting agents -->
+
+    <genai:agent
+        name="block_rewriter"
+        class=".agents.BlocksRewriterAgent"
+    />
+
+    <genai:agent
+        name="block_rewriter_single"
+        class=".agents.SingleBlockRewriterAgent"
+    />
+
+</configure>
