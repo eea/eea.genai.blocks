@@ -5,11 +5,23 @@ import uuid as uuid_mod
 from zope.component import queryUtility
 
 from eea.genai.core.interfaces import IAgentExecutor
-from eea.genai.core.agent import AgentDeps
+from eea.genai.core.agent import AgentDeps as CoreAgentDeps
 from eea.genai.blocks.sanitizers import sanitize_block
 
 
-def generate_blocks(user_request, context=None, request=None):
+class AgentDeps(CoreAgentDeps):
+    """Dependencies passed to agent tools via RunContext.
+
+    This class is passed as `deps` to the pydantic_ai Agent,
+    making it available in tool functions via `ctx.deps`.
+    """
+
+    def __init__(self, context=None, request=None, properties=None):
+        super().__init__(context=context, request=request)
+        self.properties = properties
+
+
+def generate_blocks(user_request, context=None, request=None, properties=None):
     """Generate Volto blocks from a natural language description using agents.
 
     Uses the ZCML-registered 'blocks_generator' agent (overridable via control panel).
@@ -19,13 +31,17 @@ def generate_blocks(user_request, context=None, request=None):
     result = executor.run_with_agent(
         "blocks_generator",
         user_prompt=user_request,
-        deps=AgentDeps(context=context, request=request),
+        deps=AgentDeps(
+            context=context, request=request, properties=properties
+        ),
     )
 
     return _format_blocks_result(result)
 
 
-def generate_block(user_request, block_type=None, context=None, request=None):
+def generate_block(
+    user_request, block_type=None, context=None, request=None, properties=None
+):
     """Generate a single Volto block using agents."""
     executor = _get_agent_executor()
 
@@ -36,7 +52,9 @@ def generate_block(user_request, block_type=None, context=None, request=None):
     result = executor.run_with_agent(
         "blocks_generator_single",
         user_prompt=prompt,
-        deps=AgentDeps(context=context, request=request),
+        deps=AgentDeps(
+            context=context, request=request, properties=properties
+        ),
     )
 
     block_data = result.block

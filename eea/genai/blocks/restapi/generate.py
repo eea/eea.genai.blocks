@@ -55,15 +55,21 @@ class LLMGenerateBlocksPost(Service):
         # Single block mode if block_type is specified or single=true
         single = body.get("single", False) or "block_type" in body
         block_type = body.get("block_type")
+        properties = body.get("properties")
 
         try:
             if single:
                 return generate_block(
-                    user_request, block_type=block_type,
-                    context=self.context, request=self.request,
+                    user_request,
+                    block_type=block_type,
+                    properties=properties,
+                    context=self.context,
+                    request=self.request,
                 )
             return generate_blocks(
-                user_request, context=self.context,
+                user_request,
+                properties=properties,
+                context=self.context,
                 request=self.request,
             )
         except Exception as exc:

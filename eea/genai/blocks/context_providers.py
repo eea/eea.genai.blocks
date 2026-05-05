@@ -9,6 +9,18 @@ from eea.genai.blocks.interfaces import IBlockKnowledge
 logger = logging.getLogger("eea.genai.blocks")
 
 
+class _Source:
+    """Unified accessor: properties dict overrides context attributes."""
+    def __init__(self, context, properties):
+        self._context = context
+        self._properties = properties
+
+    def __getattr__(self, name):
+        if name in self._properties:
+            return self._properties[name]
+        return getattr(self._context, name, None)
+
+
 class BlocksContentProvider(AgentContextProvider):
     """Extracts text content from Volto blocks and adds it to the user prompt.
 
@@ -19,11 +31,14 @@ class BlocksContentProvider(AgentContextProvider):
     description = "Adds block text content to the user prompt"
 
     def user_prompt(self, deps):
-        context = getattr(deps, "context", None)
+        context = getattr(deps, "context")
+        properties = getattr(deps, "properties", {})
+
         if context is None:
             return ""
 
-        block_text = extract_text(context)
+        source = _Source(context, properties)
+        block_text = extract_text(source)
         if not block_text:
             return ""
         return f"### Page content:\n\n{block_text}"
