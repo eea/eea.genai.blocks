@@ -3,6 +3,7 @@
 import json
 import logging
 
+from plone.restapi.deserializer import json_body
 from plone.restapi.services import Service
 
 from eea.genai.blocks.generate import generate_block, generate_blocks
@@ -45,7 +46,7 @@ class LLMGenerateBlocksPost(Service):
     """
 
     def reply(self):
-        body = json.loads(self.request.get("BODY", b"{}"))
+        body = json_body(self.request)
         user_request = body.get("prompt", "")
 
         if not user_request:
@@ -56,6 +57,11 @@ class LLMGenerateBlocksPost(Service):
         single = body.get("single", False) or "block_type" in body
         block_type = body.get("block_type")
         properties = body.get("properties")
+
+        if "include_prior_summary" not in body:
+            body["include_prior_summary"] = True
+
+        self.request["BODY"] = json.dumps(body)
 
         try:
             if single:

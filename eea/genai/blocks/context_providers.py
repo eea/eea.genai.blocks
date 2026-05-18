@@ -1,16 +1,18 @@
 """Agent skills for eea.genai.summary."""
 
 import logging
-from zope.component import queryUtility
-from eea.genai.core.interfaces import AgentContextProvider
-from eea.genai.blocks.interfaces import IBlockKnowledge
 
+from zope.component import queryUtility
+
+from eea.genai.blocks.interfaces import IBlockKnowledge
+from eea.genai.core.interfaces import AgentContextProvider
 
 logger = logging.getLogger("eea.genai.blocks")
 
 
 class _Source:
     """Unified accessor: properties dict overrides context attributes."""
+
     def __init__(self, context, properties):
         self._context = context
         self._properties = properties
@@ -32,7 +34,7 @@ class BlocksContentProvider(AgentContextProvider):
 
     def user_prompt(self, deps):
         context = getattr(deps, "context")
-        properties = getattr(deps, "properties", {})
+        properties = getattr(deps, "properties", None) or {}
 
         if context is None:
             return ""
