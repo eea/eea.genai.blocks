@@ -1,11 +1,11 @@
 """Agent skills for eea.genai.blocks."""
 
 from zope.component import getUtilitiesFor
-from eea.genai.core.interfaces import AgentSkill
+from eea.genai.core.interfaces import Enricher
 from eea.genai.blocks.interfaces import IBlockKnowledge
 
 
-class BlocksKnowledgeSkill(AgentSkill):
+class BlocksKnowledgeSkill(Enricher):
     """Adds available block type descriptions to the system prompt.
 
     Discovers all registered IBlockKnowledge utilities and builds

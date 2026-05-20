@@ -2,23 +2,9 @@
 
 import uuid as uuid_mod
 
-from zope.component import queryUtility
-
-from eea.genai.core.interfaces import IAgentExecutor
-from eea.genai.core.agent import AgentDeps as CoreAgentDeps
+from eea.genai.core.agent import AgentDeps
+from eea.genai.core.utils import get_executor
 from eea.genai.blocks.sanitizers import sanitize_block
-
-
-class AgentDeps(CoreAgentDeps):
-    """Dependencies passed to agent tools via RunContext.
-
-    This class is passed as `deps` to the pydantic_ai Agent,
-    making it available in tool functions via `ctx.deps`.
-    """
-
-    def __init__(self, context=None, request=None, properties=None):
-        super().__init__(context=context, request=request)
-        self.properties = properties
 
 
 def generate_blocks(user_request, context=None, request=None, properties=None):
@@ -26,16 +12,11 @@ def generate_blocks(user_request, context=None, request=None, properties=None):
 
     Uses the ZCML-registered 'blocks_generator' agent (overridable via control panel).
     """
-    executor = _get_agent_executor()
-
-    result = executor.run_with_agent(
+    result = get_executor().run_with_agent(
         "blocks_generator",
         user_prompt=user_request,
-        deps=AgentDeps(
-            context=context, request=request, properties=properties
-        ),
+        deps=AgentDeps(context=context, request=request, properties=properties),
     )
-
     return _format_blocks_result(result)
 
 
@@ -43,18 +24,14 @@ def generate_block(
     user_request, block_type=None, context=None, request=None, properties=None
 ):
     """Generate a single Volto block using agents."""
-    executor = _get_agent_executor()
-
     prompt = user_request
     if block_type:
         prompt = f"{user_request}\n\nBlock type: {block_type}"
 
-    result = executor.run_with_agent(
+    result = get_executor().run_with_agent(
         "blocks_generator_single",
         user_prompt=prompt,
-        deps=AgentDeps(
-            context=context, request=request, properties=properties
-        ),
+        deps=AgentDeps(context=context, request=request, properties=properties),
     )
 
     block_data = result.block
@@ -64,14 +41,6 @@ def generate_block(
         "block_id": block_id,
         "block": sanitize_block(block_data),
     }
-
-
-def _get_agent_executor():
-    """Get the agent executor utility."""
-    executor = queryUtility(IAgentExecutor)
-    if executor is None:
-        raise RuntimeError("No IAgentExecutor utility registered")
-    return executor
 
 
 def _format_blocks_result(result):

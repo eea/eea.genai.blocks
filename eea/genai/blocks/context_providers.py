@@ -2,28 +2,14 @@
 
 import logging
 
-from zope.component import queryUtility
-
 from eea.genai.blocks.interfaces import IBlockKnowledge
-from eea.genai.core.interfaces import AgentContextProvider
+from eea.genai.core.interfaces import Enricher
+from eea.genai.core.utils import Source, batch_get_utilities
 
 logger = logging.getLogger("eea.genai.blocks")
 
 
-class _Source:
-    """Unified accessor: properties dict overrides context attributes."""
-
-    def __init__(self, context, properties):
-        self._context = context
-        self._properties = properties
-
-    def __getattr__(self, name):
-        if name in self._properties:
-            return self._properties[name]
-        return getattr(self._context, name, None)
-
-
-class BlocksContentProvider(AgentContextProvider):
+class BlocksContentProvider(Enricher):
     """Extracts text content from Volto blocks and adds it to the user prompt.
 
     Pulls plain text from all blocks on thecontent object.
@@ -39,7 +25,7 @@ class BlocksContentProvider(AgentContextProvider):
         if context is None:
             return ""
 
-        source = _Source(context, properties)
+        source = Source(context, properties)
         block_text = extract_text(source)
         if not block_text:
             return ""
@@ -54,19 +40,22 @@ def extract_text(context):
         return ""
 
     container = {"blocks": blocks, "blocks_layout": blocks_layout}
+    # Batch-load all block-knowledge utilities once instead of per-block
+    # queryUtility lookups (was N+1 across organizer trees).
+    knowledge_map = batch_get_utilities(IBlockKnowledge)
     parts = []
     for block in _iter_blocks_ordered(container):
         block_type = block.get("@type", "")
-        text = _extract_block_text(block, block_type)
+        text = _extract_block_text(block, block_type, knowledge_map)
         if text:
             parts.append(text)
 
     return "\n\n".join(parts)
 
 
-def _extract_block_text(block, block_type):
+def _extract_block_text(block, block_type, knowledge_map):
     """Extract text from a single block using registered extractors."""
-    knowledge = queryUtility(IBlockKnowledge, name=block_type)
+    knowledge = knowledge_map.get(block_type)
     if knowledge and knowledge.text_extractor:
         try:
             return knowledge.text_extractor(block)

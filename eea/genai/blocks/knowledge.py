@@ -59,8 +59,8 @@ class SlateBlockKnowledge(BlockKnowledge):
 
         return {
             "@type": "slate",
-            "plaintext": block["plaintext"],
-            "vlaue": block["vlaue"]
+            "plaintext": block.get("plaintext", ""),
+            "value": value,
         }
 
 
