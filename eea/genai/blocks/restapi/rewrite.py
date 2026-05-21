@@ -58,7 +58,9 @@ class LLMRewriteBlocksPost(Service):
                 return {"error": "'block' must be a block object with '@type'"}
             try:
                 return rewrite_block(
-                    block, style=style, context=self.context,
+                    block,
+                    style=style,
+                    context=self.context,
                     request=self.request,
                 )
             except Exception as exc:
@@ -77,7 +79,9 @@ class LLMRewriteBlocksPost(Service):
 
         try:
             return rewrite_blocks(
-                blocks, style=style, context=self.context,
+                blocks,
+                style=style,
+                context=self.context,
                 request=self.request,
             )
         except Exception as exc:

@@ -12,7 +12,9 @@ DEFAULT_STYLE = "clearer, more concise, and more accessible"
 
 def rewrite_blocks(blocks, style=None, context=None, request=None):
     """Rewrite text content in multiple blocks using agents."""
-    prompt = f"Rewrite the text content in these blocks:\n{json.dumps(blocks, indent=2)}"
+    prompt = (
+        f"Rewrite the text content in these blocks:\n{json.dumps(blocks, indent=2)}"
+    )
     if style:
         prompt += f"\n\nThe rewrite style must be: {style}."
 

@@ -51,11 +51,7 @@ class SlateBlockKnowledge(BlockKnowledge):
         value = block.get("value")
         if not isinstance(value, list):
             # Invalid value - return clean slate block
-            return {
-                "@type": "slate",
-                "plaintext": "",
-                "value": []
-            }
+            return {"@type": "slate", "plaintext": "", "value": []}
 
         return {
             "@type": "slate",
