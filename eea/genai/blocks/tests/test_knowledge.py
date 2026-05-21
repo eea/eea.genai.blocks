@@ -9,7 +9,6 @@ from eea.genai.blocks.knowledge import SlateBlockKnowledge
 
 
 class TestSlateBlockSanitizer(unittest.TestCase):
-
     def setUp(self):
         self.kb = SlateBlockKnowledge(block_type="slate", title="Slate")
 
@@ -54,7 +53,6 @@ class TestSlateBlockSanitizer(unittest.TestCase):
 
 
 class TestSlateTextExtractor(unittest.TestCase):
-
     def setUp(self):
         self.kb = SlateBlockKnowledge(block_type="slate", title="Slate")
 

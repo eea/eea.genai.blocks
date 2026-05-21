@@ -10,6 +10,7 @@ class IGenAIBlocksLayer(IDefaultBrowserLayer):
 
 # Directive
 
+
 class IBlockKnowledge(Interface):
     """Named utility holding knowledge about a Volto block type for LLM use.
 

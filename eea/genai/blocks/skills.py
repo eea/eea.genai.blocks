@@ -43,7 +43,7 @@ def get_block_types_description():
         else:
             entry = ""
 
-        entry += f"#### {kb.title} (@type: \"{name}\")"
+        entry += f'#### {kb.title} (@type: "{name}")'
         if kb.description:
             entry += f"\n\n{kb.description}"
         entry += f"\n\n**Schema:**\n\n{kb.schema}"

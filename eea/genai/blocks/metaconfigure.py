@@ -10,6 +10,7 @@ from eea.genai.blocks.interfaces import IBlockKnowledge
 
 # --- Agent block knowledge directive ---
 
+
 class IBlockKnowledgeDirective(Interface):
     """Schema for the <genai:blockKnowledge> ZCML directive.
 
